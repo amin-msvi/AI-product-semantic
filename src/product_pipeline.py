@@ -2,14 +2,14 @@ from typing import Dict, List
 from pathlib import Path
 import logging
 
-from src.data_loader import DataLoader
-from src.normalizer import ProductNormalizer
-from src.feature_extractor import FeatureExtractor
-from src.intent_mapper import IntentMapper
-from src.content_optimizer import ContentOptimizer
-from src.knowledge_graph import KnowledgeGraphBuilder
-from src.query_matcher import QueryMatcher
-from src.schema_validator import SchemaValidator
+from pipeline_components.data_loader import DataLoader
+from pipeline_components.normalizer import ProductNormalizer
+from pipeline_components.feature_extractor import FeatureExtractor
+from pipeline_components.intent_mapper import IntentMapper
+from pipeline_components.content_optimizer import ContentOptimizer
+from pipeline_components.knowledge_graph import KnowledgeGraphBuilder
+from pipeline_components.query_matcher import QueryMatcher
+from pipeline_components.schema_validator import SchemaValidator
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

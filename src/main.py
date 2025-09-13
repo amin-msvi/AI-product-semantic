@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from src.product_pipeline import AIProductPipeline
+from product_pipeline import AIProductPipeline
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
