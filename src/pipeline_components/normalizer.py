@@ -62,8 +62,6 @@ class ProductNormalizer:
             self.logger.info("Dropped 'image_urls' field after normalization.")
 
         self.logger.info("Normalization complete for product ID: %s", normalized['id'])
-        print("NORMALIZED PRODUCT:", normalized)
-        print("=" * 50)
         return normalized
     
     def _normalize_id(self, product: Dict[str, Any]) -> str:
