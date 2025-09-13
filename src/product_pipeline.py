@@ -1,7 +1,6 @@
 import json
-import csv
 import re
-from typing import Dict, List, Any
+from typing import Dict, List
 from pathlib import Path
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -10,244 +9,249 @@ from data_utils import load_data
 
 class AIProductPipeline:
     """Simple but practical pipeline for AI-ready product data"""
-    
+
     def __init__(self):
         # A lightweight model for semantic embeddings
-        self.encoder = SentenceTransformer('all-MiniLM-L6-v2')
-        
+        self.encoder = SentenceTransformer("all-MiniLM-L6-v2")
+
         # Simple but effective intent patterns
         self.intent_map = {
-            'affordable': ['cheap', 'budget', 'value', 'affordable', 'under'],
-            'summer': ['summer', 'light', 'breathable', 'cotton', 'warm weather'],
-            'eco_friendly': ['organic', 'eco', 'sustainable', 'green'],
-            'casual': ['casual', 'everyday', 'basic', 'comfortable', 'daily'],
-            'comfort': ['comfortable', 'soft', 'cozy', 'warm', 'stretch']
+            "affordable": ["cheap", "budget", "value", "affordable", "under"],
+            "summer": ["summer", "light", "breathable", "cotton", "warm weather"],
+            "eco_friendly": ["organic", "eco", "sustainable", "green"],
+            "casual": ["casual", "everyday", "basic", "comfortable", "daily"],
+            "comfort": ["comfortable", "soft", "cozy", "warm", "stretch"],
         }
-    
+
     def normalize_product(self, product: Dict) -> Dict:
         """Clean and normalize product data"""
         # Fix brand variations (H&M, H & M, etc.)
-        brand = product.get('brand', '')
-        if 'h' in brand.lower() and 'm' in brand.lower():
-            product['brand'] = 'H&M'
-        
-        # Normalize availability
-        avail = product.get('availability', '').lower().replace(' ', '')
-        product['availability'] = 'in_stock' if 'in' in avail else 'out_of_stock'
-        
-        # Clean category (clothes>women>dresses → women/dresses)
-        category = product.get('category', '')
-        product['category'] = category.replace('>', '/').replace(',', '/').lower()
-        
-        # Ensure price is float
-        try:
-            product['price'] = float(product['price'])
-        except:
-            product['price'] = 0.0
-        
-        # Take first image if multiple
-        images = product.get('image_urls', '')
+        brand = product.get("brand", "")
+        if "h" in brand.lower() and "m" in brand.lower():
+            product["brand"] = "H&M"
 
-        if isinstance(images, str) and '|' in images:
-            product['image_link'] = images.split('|')[0].strip()
+        # Normalize availability
+        avail = product.get("availability", "").lower().replace(" ", "")
+        product["availability"] = "in_stock" if "in" in avail else "out_of_stock"
+
+        # Clean category (clothes>women>dresses → women/dresses)
+        category = product.get("category", "")
+        product["category"] = category.replace(">", "/").replace(",", "/").lower()
+
+        # Ensure price is float
+        if type(product["price"]) is float:
+            product["price"] = float(product["price"])
         else:
-            product['image_link'] = images.strip() if isinstance(images, str) else ""
+            product["price"] = (
+                float(re.sub(r"[^\d.]", "", str(product.get("price", "0")))) or 0.0
+            )
+
+        # Take first image if multiple
+        images = product.get("image_urls", "")
+
+        if isinstance(images, str) and "|" in images:
+            product["image_link"] = images.split("|")[0].strip()
+        else:
+            product["image_link"] = images.strip() if isinstance(images, str) else ""
 
         # Add ID field
-        product['id'] = product.get('product_id', '')
-        
+        product["id"] = product.get("product_id", "")
+
         return product
-    
+
     def extract_intents(self, product: Dict) -> List[str]:
         """Extract user intents from product text"""
         text = f"{product.get('title', '')} {product.get('description', '')}".lower()
         intents = []
-        
+
         # Check for intent patterns
         for intent, keywords in self.intent_map.items():
             if any(kw in text for kw in keywords):
                 intents.append(intent)
-        
+
         # Price-based intent
-        if product.get('price', 0) < 30:
-            intents.append('budget_friendly')
-        
+        if product.get("price", 0) < 30:
+            intents.append("budget_friendly")
+
         # Category-based intents
-        category = product.get('category', '')
-        if 'dress' in category:
-            intents.append('dress_shopping')
-        elif 'hoodie' in category:
-            intents.append('cozy_wear')
-        
+        category = product.get("category", "")
+        if "dress" in category:
+            intents.append("dress_shopping")
+        elif "hoodie" in category:
+            intents.append("cozy_wear")
+
         return list(set(intents))
-    
+
     def extract_features(self, product: Dict) -> List[str]:
         """Extract key features from product"""
         text = f"{product.get('title', '')} {product.get('description', '')}".lower()
         features = []
-        
+
         # Material features
-        materials = ['cotton', 'organic', 'denim', 'wool']
+        materials = ["cotton", "organic", "denim", "wool"]
         for material in materials:
             if material in text:
                 features.append(material)
-        
+
         # Style features
-        if 'slim' in text:
-            features.append('slim_fit')
-        if 'stretch' in text:
-            features.append('stretchy')
-        
+        if "slim" in text:
+            features.append("slim_fit")
+        if "stretch" in text:
+            features.append("stretchy")
+
         # Color features
-        colors = ['white', 'blue', 'black']
+        colors = ["white", "blue", "black"]
         for color in colors:
             if color in text:
                 features.append(f"{color}_color")
-        
+
         return features
-    
+
     def create_ai_optimized_content(self, product: Dict) -> Dict:
         """Generate AI-optimized title and description"""
-        brand = product.get('brand', '')
-        title = product.get('title', '')
-        desc = product.get('description', '')
-        intents = product.get('intents', [])
-        features = product.get('features', [])
-        
+        brand = product.get("brand", "")
+        title = product.get("title", "")
+        desc = product.get("description", "")
+        intents = product.get("intents", [])
+        features = product.get("features", [])
+
         # Create informative AI title
-        audience = 'Women' if 'women' in product.get('category', '') else \
-                  'Men' if 'men' in product.get('category', '') else \
-                  'Kids' if 'kids' in product.get('category', '') else ''
-        
+        audience = (
+            "Women"
+            if "women" in product.get("category", "")
+            else "Men"
+            if "men" in product.get("category", "")
+            else "Kids"
+            if "kids" in product.get("category", "")
+            else ""
+        )
+
         # Build optimized title
         ai_title = f"{brand} {audience} {title}".strip()
-        if 'organic' in features:
+        if "organic" in features:
             ai_title = f"Eco-Friendly {ai_title}"
-        
+
         # Build optimized description
         ai_desc = desc
         if intents:
             ai_desc += f". Perfect for {', '.join(intents[:2]).replace('_', ' ')}"
         if features:
-            key_features = ', '.join(features[:3]).replace('_', ' ')
+            key_features = ", ".join(features[:3]).replace("_", " ")
             ai_desc += f". Features: {key_features}"
-        
-        product['ai_optimized_title'] = ai_title[:150]  # Max 150 chars
-        product['ai_optimized_description'] = ai_desc[:500]  # Max 500 chars
-        
+
+        product["ai_optimized_title"] = ai_title[:150]  # Max 150 chars
+        product["ai_optimized_description"] = ai_desc[:500]  # Max 500 chars
+
         return product
-    
+
     def build_knowledge_graph(self, products: List[Dict]) -> Dict:
         """Create simple knowledge graph representation"""
-        graph = {
-            'products': {},
-            'relationships': []
-        }
-        
+        graph = {"products": {}, "relationships": []}
+
         for product in products:
-            pid = product['id']
-            
+            pid = product["id"]
+
             # Create product node
-            graph['products'][pid] = {
-                'title': product.get('ai_optimized_title', product['title']),
-                'category': product.get('category', ''),
-                'intents': product.get('intents', []),
-                'features': product.get('features', []),
-                'price': product.get('price', 0)
+            graph["products"][pid] = {
+                "title": product.get("ai_optimized_title", product["title"]),
+                "category": product.get("category", ""),
+                "intents": product.get("intents", []),
+                "features": product.get("features", []),
+                "price": product.get("price", 0),
             }
-            
+
             # Create relationships based on shared intents
-            for intent in product.get('intents', []):
-                graph['relationships'].append({
-                    'type': 'serves_intent',
-                    'source': pid,
-                    'target': intent
-                })
-            
+            for intent in product.get("intents", []):
+                graph["relationships"].append(
+                    {"type": "serves_intent", "source": pid, "target": intent}
+                )
+
             # Create relationships based on category
-            if product.get('category'):
-                graph['relationships'].append({
-                    'type': 'belongs_to',
-                    'source': pid,
-                    'target': product['category']
-                })
-        
+            if product.get("category"):
+                graph["relationships"].append(
+                    {"type": "belongs_to", "source": pid, "target": product["category"]}
+                )
+
         return graph
-    
+
     def match_query(self, query: str, products: List[Dict]) -> List[Dict]:
         """Match user query to products using embeddings"""
         # Encode query
         query_embedding = self.encoder.encode(query)
-        
+
         results = []
         for product in products:
             # Create product text for embedding
             product_text = f"{product.get('ai_optimized_title', '')} {product.get('ai_optimized_description', '')}"
             product_embedding = self.encoder.encode(product_text)
-            
+
             # Calculate similarity
             similarity = np.dot(query_embedding, product_embedding) / (
                 np.linalg.norm(query_embedding) * np.linalg.norm(product_embedding)
             )
-            
+
             # Check for direct matches
             query_lower = query.lower()
             boost = 0
-            
+
             # Price matching
-            if 'under' in query_lower or 'below' in query_lower:
+            if "under" in query_lower or "below" in query_lower:
                 try:
-                    price_limit = float(re.findall(r'\d+', query)[0])
-                    if product['price'] <= price_limit:
+                    price_limit = float(re.findall(r"\d+", query)[0])
+                    if product["price"] <= price_limit:
                         boost += 0.2
-                except:
+                except (ValueError, IndexError):
                     pass
-            
+
             # Intent matching
-            for intent in product.get('intents', []):
-                if intent.replace('_', ' ') in query_lower:
+            for intent in product.get("intents", []):
+                if intent.replace("_", " ") in query_lower:
                     boost += 0.1
-            
-            results.append({
-                'product': product,
-                'score': float(similarity) + boost,
-                'match_reason': self._get_match_reason(query, product, similarity)
-            })
-        
+
+            results.append(
+                {
+                    "product": product,
+                    "score": float(similarity) + boost,
+                    "match_reason": self._get_match_reason(query, product, similarity),
+                }
+            )
+
         # Sort by score and return top matches
-        results.sort(key=lambda x: x['score'], reverse=True)
+        results.sort(key=lambda x: x["score"], reverse=True)
         return results[:3]
-    
+
     def _get_match_reason(self, query: str, product: Dict, similarity: float) -> str:
         """Explain why product matches query"""
         reasons = []
-        
+
         if similarity > 0.5:
             reasons.append("Strong semantic match")
-        
+
         query_lower = query.lower()
-        
+
         # Check price
-        if 'under' in query_lower and product['price'] < 50:
+        if "under" in query_lower and product["price"] < 50:
             reasons.append(f"Price in range (${product['price']})")
-        
+
         # Check features
-        for feature in product.get('features', []):
-            if feature.replace('_', ' ') in query_lower:
+        for feature in product.get("features", []):
+            if feature.replace("_", " ") in query_lower:
                 reasons.append(f"Has {feature.replace('_', ' ')}")
-        
+
         return ". ".join(reasons) if reasons else "Partial match"
-    
-    def process_pipeline(self, input_csv: str, schema_json: str, queries_json: str) -> Dict:
+
+    def process_pipeline(
+        self, input_csv: str, schema_json: str, queries_json: str
+    ) -> Dict:
         """Run the complete pipeline"""
-        
+
         # 1. Load data
-        products = load_data(input_csv, 'csv')
-        
-        schema = load_data(schema_json, 'json')
-        
-        queries_data = load_data(queries_json, 'json')
-        queries = queries_data.get('queries', [])
+        products = load_data(input_csv, "csv")
+
+        schema = load_data(schema_json, "json")
+
+        queries_data = load_data(queries_json, "json")
+        queries = queries_data.get("queries", [])
 
         print("products:", products)
         print("schema:", schema)
@@ -258,71 +262,71 @@ class AIProductPipeline:
         for product in products:
             # Normalize
             product = self.normalize_product(product)
-            
+
             # Extract semantic features
-            product['intents'] = self.extract_intents(product)
-            product['features'] = self.extract_features(product)
-            
+            product["intents"] = self.extract_intents(product)
+            product["features"] = self.extract_features(product)
+
             # Create AI-optimized content
             product = self.create_ai_optimized_content(product)
-            
+
             enriched_products.append(product)
-        
+
         # 3. Build knowledge graph (for 3 products as required)
         graph = self.build_knowledge_graph(enriched_products[:3])
-        
+
         # 4. Test query matching
         query_results = {}
         for query in queries:
             matches = self.match_query(query, enriched_products)
             query_results[query] = [
                 {
-                    'product_id': m['product']['id'],
-                    'title': m['product']['ai_optimized_title'],
-                    'score': m['score'],
-                    'reason': m['match_reason']
+                    "product_id": m["product"]["id"],
+                    "title": m["product"]["ai_optimized_title"],
+                    "score": m["score"],
+                    "reason": m["match_reason"],
                 }
                 for m in matches
             ]
-        
+
         return {
-            'enriched_products': enriched_products,
-            'knowledge_graph': graph,
-            'query_results': query_results
+            "enriched_products": enriched_products,
+            "knowledge_graph": graph,
+            "query_results": query_results,
         }
 
 
 def main():
     """Main execution"""
     # Setup paths
-    data_dir = Path('data')
-    input_dir = data_dir / 'input'
-    output_dir = data_dir / 'output'
+    data_dir = Path("data")
+    input_dir = data_dir / "input"
+    output_dir = data_dir / "output"
     output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Create sample data if needed
     if not input_dir.exists():
         input_dir.mkdir(parents=True, exist_ok=True)
         create_sample_data(input_dir)
-    
+
     # Run pipeline
     pipeline = AIProductPipeline()
     results = pipeline.process_pipeline(
-        str(input_dir / 'raw_products.csv'),
-        str(input_dir / 'ai_schema.json'),
-        str(input_dir / 'ai_queries.json')
+        str(input_dir / "raw_products.csv"),
+        str(input_dir / "ai_schema.json"),
+        str(input_dir / "ai_queries.json"),
     )
-    
+
     # Save outputs
-    with open(output_dir / 'enriched_products.json', 'w') as f:
-        json.dump(results['enriched_products'], f, indent=2)
-    
-    with open(output_dir / 'knowledge_graph.json', 'w') as f:
-        json.dump(results['knowledge_graph'], f, indent=2)
-    
-    with open(output_dir / 'query_results.json', 'w') as f:
-        json.dump(results['query_results'], f, indent=2)
-    
+    with open(output_dir / "enriched_products.json", "w") as f:
+        json.dump(results["enriched_products"], f, indent=2)
+
+    with open(output_dir / "knowledge_graph.json", "w") as f:
+        json.dump(results["knowledge_graph"], f, indent=2)
+
+    with open(output_dir / "query_results.json", "w") as f:
+        json.dump(results["query_results"], f, indent=2)
+
     print("✅ Pipeline completed successfully!")
     print(f"📁 Results saved to {output_dir}")
     print(f"📊 Processed {len(results['enriched_products'])} products")
@@ -331,15 +335,14 @@ def main():
 
 def create_sample_data(input_dir: Path):
     """Create the provided sample data"""
-    
+
     # raw_products.csv
-    csv_data = load_data('data/input/raw_products.csv', 'csv')
+    csv_data = load_data("data/input/raw_products.csv", "csv")
     print(csv_data)
 
-    
-    with open(input_dir / 'raw_products.csv', 'w') as f:
+    with open(input_dir / "raw_products.csv", "w") as f:
         f.write(csv_data)
-    
+
     # ai_schema.json
     schema = {
         "required_fields": {
@@ -347,24 +350,24 @@ def create_sample_data(input_dir: Path):
             "title": "string (max 150 chars)",
             "description": "string (max 500 chars)",
             "price": "float (>0)",
-            "availability": "enum[in_stock, out_of_stock)"
+            "availability": "enum[in_stock, out_of_stock)",
         },
         "optional_fields": {
             "brand": "string",
             "category": "normalized string",
             "gtin": "string",
-            "image_link": "url"
+            "image_link": "url",
         },
         "semantic_fields": {
             "intents": "array of strings",
             "features": "array of strings",
-            "relationships": "array of {type, target}"
-        }
+            "relationships": "array of {type, target}",
+        },
     }
-    
-    with open(input_dir / 'ai_schema.json', 'w') as f:
+
+    with open(input_dir / "ai_schema.json", "w") as f:
         json.dump(schema, f, indent=2)
-    
+
     # ai_queries.json
     queries = {
         "queries": [
@@ -372,11 +375,11 @@ def create_sample_data(input_dir: Path):
             "eco-friendly hoodies for everyday wear",
             "basic t-shirts for men slim fit",
             "comfortable jeans for kids",
-            "white sneakers for casual outfits"
+            "white sneakers for casual outfits",
         ]
     }
-    
-    with open(input_dir / 'ai_queries.json', 'w') as f:
+
+    with open(input_dir / "ai_queries.json", "w") as f:
         json.dump(queries, f, indent=2)
 
 

@@ -1,0 +1,113 @@
+{
+  "products": {
+    "HM001": {
+      "title": "H&M Women Ladies Dress",
+      "category": "clothes/women/dresses",
+      "intents": [
+        "budget_friendly",
+        "dress_shopping",
+        "summer"
+      ],
+      "features": [
+        "cotton"
+      ],
+      "price": 29.99
+    },
+    "HM002": {
+      "title": "H&M Men Tshirt Men",
+      "category": "mens tops",
+      "intents": [
+        "budget_friendly",
+        "casual",
+        "summer"
+      ],
+      "features": [
+        "cotton",
+        "slim_fit"
+      ],
+      "price": 12.99
+    },
+    "HM003": {
+      "title": "Eco-Friendly H&M  Organic Hoodie",
+      "category": "unisex hoodies",
+      "intents": [
+        "cozy_wear",
+        "comfort",
+        "eco_friendly",
+        "summer"
+      ],
+      "features": [
+        "cotton",
+        "organic"
+      ],
+      "price": 39.99
+    }
+  },
+  "relationships": [
+    {
+      "type": "serves_intent",
+      "source": "HM001",
+      "target": "budget_friendly"
+    },
+    {
+      "type": "serves_intent",
+      "source": "HM001",
+      "target": "dress_shopping"
+    },
+    {
+      "type": "serves_intent",
+      "source": "HM001",
+      "target": "summer"
+    },
+    {
+      "type": "belongs_to",
+      "source": "HM001",
+      "target": "clothes/women/dresses"
+    },
+    {
+      "type": "serves_intent",
+      "source": "HM002",
+      "target": "budget_friendly"
+    },
+    {
+      "type": "serves_intent",
+      "source": "HM002",
+      "target": "casual"
+    },
+    {
+      "type": "serves_intent",
+      "source": "HM002",
+      "target": "summer"
+    },
+    {
+      "type": "belongs_to",
+      "source": "HM002",
+      "target": "mens tops"
+    },
+    {
+      "type": "serves_intent",
+      "source": "HM003",
+      "target": "cozy_wear"
+    },
+    {
+      "type": "serves_intent",
+      "source": "HM003",
+      "target": "comfort"
+    },
+    {
+      "type": "serves_intent",
+      "source": "HM003",
+      "target": "eco_friendly"
+    },
+    {
+      "type": "serves_intent",
+      "source": "HM003",
+      "target": "summer"
+    },
+    {
+      "type": "belongs_to",
+      "source": "HM003",
+      "target": "unisex hoodies"
+    }
+  ]
+}

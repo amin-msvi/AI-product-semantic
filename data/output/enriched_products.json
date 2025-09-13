@@ -1,0 +1,119 @@
+[
+  {
+    "product_id": "HM001",
+    "title": "Ladies Dress",
+    "description": "summer cotton dress",
+    "brand": "H&M",
+    "category": "clothes/women/dresses",
+    "price": 29.99,
+    "availability": "in_stock",
+    "gtin": "123456789012",
+    "image_urls": "https://example.com/hm_dress1.jpg",
+    "image_link": "https://example.com/hm_dress1.jpg",
+    "id": "HM001",
+    "intents": [
+      "budget_friendly",
+      "dress_shopping",
+      "summer"
+    ],
+    "features": [
+      "cotton"
+    ],
+    "ai_optimized_title": "H&M Women Ladies Dress",
+    "ai_optimized_description": "summer cotton dress. Perfect for budget friendly, dress shopping. Features: cotton"
+  },
+  {
+    "product_id": "HM002",
+    "title": "Tshirt Men",
+    "description": "basic tee cotton slim fit",
+    "brand": "H&M",
+    "category": "mens tops",
+    "price": 12.99,
+    "availability": "in_stock",
+    "gtin": NaN,
+    "image_urls": "https://example.com/hm_tshirt1.jpg|https://example.com/hm_tshirt2.jpg",
+    "image_link": "https://example.com/hm_tshirt1.jpg",
+    "id": "HM002",
+    "intents": [
+      "budget_friendly",
+      "casual",
+      "summer"
+    ],
+    "features": [
+      "cotton",
+      "slim_fit"
+    ],
+    "ai_optimized_title": "H&M Men Tshirt Men",
+    "ai_optimized_description": "basic tee cotton slim fit. Perfect for budget friendly, casual. Features: cotton, slim fit"
+  },
+  {
+    "product_id": "HM003",
+    "title": "Organic Hoodie",
+    "description": "hoodie warm soft eco cotton",
+    "brand": "H&M",
+    "category": "unisex hoodies",
+    "price": 39.99,
+    "availability": "out_of_stock",
+    "gtin": NaN,
+    "image_urls": "https://example.com/hm_hoodie.jpg",
+    "image_link": "https://example.com/hm_hoodie.jpg",
+    "id": "HM003",
+    "intents": [
+      "cozy_wear",
+      "comfort",
+      "eco_friendly",
+      "summer"
+    ],
+    "features": [
+      "cotton",
+      "organic"
+    ],
+    "ai_optimized_title": "Eco-Friendly H&M  Organic Hoodie",
+    "ai_optimized_description": "hoodie warm soft eco cotton. Perfect for cozy wear, comfort. Features: cotton, organic"
+  },
+  {
+    "product_id": "HM004",
+    "title": "Kids Jeans Blue",
+    "description": "stretch denim pants kids",
+    "brand": "H&M",
+    "category": "kids / bottoms / jeans",
+    "price": 19.99,
+    "availability": "out_of_stock",
+    "gtin": "456123789654",
+    "image_urls": "https://example.com/hm_kids_jeans.jpg",
+    "image_link": "https://example.com/hm_kids_jeans.jpg",
+    "id": "HM004",
+    "intents": [
+      "budget_friendly",
+      "comfort"
+    ],
+    "features": [
+      "denim",
+      "stretchy",
+      "blue_color"
+    ],
+    "ai_optimized_title": "H&M Kids Kids Jeans Blue",
+    "ai_optimized_description": "stretch denim pants kids. Perfect for budget friendly, comfort. Features: denim, stretchy, blue color"
+  },
+  {
+    "product_id": "HM005",
+    "title": "Sneaker Shoes",
+    "description": "white shoes unisex everyday",
+    "brand": "H&M",
+    "category": "footwear/sneakers",
+    "price": 49.99,
+    "availability": "in_stock",
+    "gtin": NaN,
+    "image_urls": NaN,
+    "image_link": "",
+    "id": "HM005",
+    "intents": [
+      "casual"
+    ],
+    "features": [
+      "white_color"
+    ],
+    "ai_optimized_title": "H&M  Sneaker Shoes",
+    "ai_optimized_description": "white shoes unisex everyday. Perfect for casual. Features: white color"
+  }
+]
