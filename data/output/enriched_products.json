@@ -8,7 +8,6 @@
     "price": 29.99,
     "availability": "in_stock",
     "gtin": "123456789012",
-    "image_urls": "https://example.com/hm_dress1.jpg",
     "id": "HM001",
     "image_link": "https://example.com/hm_dress1.jpg",
     "features": [
@@ -31,7 +30,6 @@
     "price": 12.99,
     "availability": "in_stock",
     "gtin": "",
-    "image_urls": "https://example.com/hm_tshirt1.jpg|https://example.com/hm_tshirt2.jpg",
     "id": "HM002",
     "image_link": "https://example.com/hm_tshirt1.jpg",
     "features": [
@@ -55,7 +53,6 @@
     "price": 39.99,
     "availability": "in_stock",
     "gtin": "",
-    "image_urls": "https://example.com/hm_hoodie.jpg",
     "id": "HM003",
     "image_link": "https://example.com/hm_hoodie.jpg",
     "features": [
@@ -80,7 +77,6 @@
     "price": 19.99,
     "availability": "out_of_stock",
     "gtin": "456123789654",
-    "image_urls": "https://example.com/hm_kids_jeans.jpg",
     "id": "HM004",
     "image_link": "https://example.com/hm_kids_jeans.jpg",
     "features": [
@@ -104,7 +100,6 @@
     "price": 49.99,
     "availability": "in_stock",
     "gtin": "",
-    "image_urls": "",
     "id": "HM005",
     "image_link": "",
     "features": [
@@ -115,5 +110,23 @@
     ],
     "ai_optimized_title": "H&M Sneaker Shoes",
     "ai_optimized_description": "white shoes unisex everyday. Perfect for casual. Features: white color"
+  },
+  {
+    "product_id": "HM006",
+    "title": "Winter Coat",
+    "description": "warm waterproof coat",
+    "brand": "H&M",
+    "category": "clothes/outerwear/coats",
+    "price": 89.99,
+    "availability": "in_stock",
+    "gtin": "",
+    "id": "HM006",
+    "image_link": "",
+    "features": [],
+    "intents": [
+      "comfort"
+    ],
+    "ai_optimized_title": "H&M Winter Coat",
+    "ai_optimized_description": "warm waterproof coat. Perfect for comfort"
   }
 ]

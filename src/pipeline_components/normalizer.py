@@ -27,7 +27,7 @@ class ProductNormalizer:
     # Availability status mappings
     AVAILABILITY_MAPPINGS = {
         'in_stock': ['in stock', 'instock', 'available', 'in_stock'],
-        'out_of_stock': ['out of stock', 'outofstock', 'unavailable', 'out_of_stock']
+        'out_of_stock': ['out of stock', 'outofstock', 'unavailable', 'not available', 'out_of_stock']
     }
     
     def __init__(self, config: Optional[NormalizationConfig] = None):
@@ -56,8 +56,12 @@ class ProductNormalizer:
         normalized['title'] = self._normalize_text(product.get('title', ''), self.config.max_title_length)
         normalized['description'] = self._normalize_text(product.get('description', ''), self.config.max_description_length)
         
+        # dropping image_urls as we have image_link now
+        if 'image_urls' in normalized:
+            del normalized['image_urls']
+            self.logger.info("Dropped 'image_urls' field after normalization.")
+
         self.logger.info("Normalization complete for product ID: %s", normalized['id'])
-        
         return normalized
     
     def _normalize_id(self, product: Dict[str, Any]) -> str:
@@ -92,11 +96,11 @@ class ProductNormalizer:
         
         # Replace various separators with standard separator
         normalized = category.lower().strip()
-        normalized = re.sub(r'[>,\s]+', self.config.category_separator, normalized)
+        normalized = re.sub(r'[>,\s]+', self.config.category_separator, normalized)  # Replace >, , and whitespace
         normalized = re.sub(r'/+', self.config.category_separator, normalized)  # Remove duplicate separators
-        
-        return normalized.strip(self.config.category_separator)
-    
+
+        return normalized.strip(self.config.category_separator)   # Clean leading/trailing separators
+
     def _normalize_price(self, price: Any) -> float:
         """Normalize price to float value."""
         if pd.isna(price) or price is None or price == '':
@@ -114,13 +118,13 @@ class ProductNormalizer:
                 return max(float(price_match.group()), 0.0)
             except ValueError:
                 pass
-        
+
         return self.config.default_price
     
     def _normalize_availability(self, availability: str) -> str:
         """Normalize availability status."""
         if not availability:
-            return 'out_of_stock'
+            return 'out_of_stock'  # it depends on context, but safer to assume out of stock
         
         availability_lower = availability.lower().strip().replace(' ', '')
         
@@ -138,16 +142,22 @@ class ProductNormalizer:
         
         image_str = str(image_urls).strip()
         
-        # Handle multiple URLs separated by pipe
+        # Handle multiple URLs separated by pipe.
+        # It depends on context, but here it takes the first valid URL.
         if '|' in image_str:
             image_str = image_str.split('|')[0].strip()
         
-        # Basic URL validation
-        if image_str and (image_str.startswith('http') or image_str.startswith('www')):
+        # URL validation regex
+        url_pattern = re.compile(
+            r'^(https?://|www\.)[^\s/$.?#].[^\s]*$',
+            re.IGNORECASE
+        )
+
+        if image_str and url_pattern.match(image_str):
             return image_str
-        
+
         return ''
-    
+
     def _normalize_text(self, text: str, max_length: int) -> str:
         """Normalize text fields with length constraints."""
         if not text:
