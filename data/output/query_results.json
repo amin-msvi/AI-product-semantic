@@ -3,39 +3,39 @@
     {
       "product_id": "HM001",
       "title": "H&M Women Ladies Dress",
-      "score": 0.8776836276054383,
+      "score": 0.8193364024162293,
       "reason": "Strong semantic match. Price in range ($29.99)"
     },
     {
       "product_id": "HM002",
       "title": "H&M Men Tshirt Men",
-      "score": 0.6541663587093354,
+      "score": 0.634555208683014,
       "reason": "Price in range ($12.99)"
     },
     {
       "product_id": "HM004",
       "title": "H&M Kids Kids Jeans Blue",
-      "score": 0.5165943920612335,
+      "score": 0.5029468655586242,
       "reason": "Price in range ($19.99)"
     }
   ],
   "eco-friendly hoodies for everyday wear": [
     {
       "product_id": "HM003",
-      "title": "Eco-Friendly H&M  Organic Hoodie",
-      "score": 0.7041553258895874,
+      "title": "Eco-Friendly H&M Organic Hoodie",
+      "score": 0.687059760093689,
       "reason": "Strong semantic match"
     },
     {
       "product_id": "HM002",
       "title": "H&M Men Tshirt Men",
-      "score": 0.37988942861557007,
+      "score": 0.36660879850387573,
       "reason": "Partial match"
     },
     {
       "product_id": "HM001",
       "title": "H&M Women Ladies Dress",
-      "score": 0.35814690589904785,
+      "score": 0.3322712779045105,
       "reason": "Partial match"
     }
   ],
@@ -43,19 +43,19 @@
     {
       "product_id": "HM002",
       "title": "H&M Men Tshirt Men",
-      "score": 0.764491617679596,
+      "score": 0.7953287839889527,
       "reason": "Strong semantic match. Has slim fit"
-    },
-    {
-      "product_id": "HM003",
-      "title": "Eco-Friendly H&M  Organic Hoodie",
-      "score": 0.3441125750541687,
-      "reason": "Partial match"
     },
     {
       "product_id": "HM001",
       "title": "H&M Women Ladies Dress",
-      "score": 0.3423410654067993,
+      "score": 0.33122357726097107,
+      "reason": "Partial match"
+    },
+    {
+      "product_id": "HM005",
+      "title": "H&M Sneaker Shoes",
+      "score": 0.3278101682662964,
       "reason": "Partial match"
     }
   ],
@@ -63,39 +63,39 @@
     {
       "product_id": "HM004",
       "title": "H&M Kids Kids Jeans Blue",
-      "score": 0.7949166059494018,
+      "score": 0.7735329031944275,
       "reason": "Strong semantic match"
     },
     {
       "product_id": "HM003",
-      "title": "Eco-Friendly H&M  Organic Hoodie",
-      "score": 0.4327210247516632,
+      "title": "Eco-Friendly H&M Organic Hoodie",
+      "score": 0.4074846863746643,
       "reason": "Partial match"
     },
     {
       "product_id": "HM002",
       "title": "H&M Men Tshirt Men",
-      "score": 0.347994863986969,
+      "score": 0.33701711893081665,
       "reason": "Partial match"
     }
   ],
   "white sneakers for casual outfits": [
     {
       "product_id": "HM005",
-      "title": "H&M  Sneaker Shoes",
-      "score": 0.799518620967865,
+      "title": "H&M Sneaker Shoes",
+      "score": 0.8154737710952759,
       "reason": "Strong semantic match"
     },
     {
       "product_id": "HM002",
       "title": "H&M Men Tshirt Men",
-      "score": 0.4295164406299591,
+      "score": 0.4443295657634735,
       "reason": "Partial match"
     },
     {
       "product_id": "HM004",
       "title": "H&M Kids Kids Jeans Blue",
-      "score": 0.3250606954097748,
+      "score": 0.3063380718231201,
       "reason": "Partial match"
     }
   ]

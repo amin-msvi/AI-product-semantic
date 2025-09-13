@@ -1,310 +1,163 @@
-import json
-import re
 from typing import Dict, List
 from pathlib import Path
-import numpy as np
-from sentence_transformers import SentenceTransformer
-from data_utils import DataLoader
-from normalizer import ProductNormalizer
 import logging
-from feature_extractor import FeatureExtractor
+
+from pipeline_components.data_loader import DataLoader
+from pipeline_components.normalizer import ProductNormalizer
+from pipeline_components.feature_extractor import FeatureExtractor
+from pipeline_components.intent_mapper import IntentMapper
+from pipeline_components.content_optimizer import ContentOptimizer
+from pipeline_components.knowledge_graph import KnowledgeGraphBuilder
+from pipeline_components.query_matcher import QueryMatcher
+from pipeline_components.schema_validator import SchemaValidator
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 class AIProductPipeline:
     """Simple but practical pipeline for AI-ready product data"""
 
     def __init__(self):
-        # A lightweight model for semantic embeddings
-        self.encoder = SentenceTransformer("all-MiniLM-L6-v2")
-
-        # Simple but effective intent patterns
-        self.intent_map = {
-            "affordable": ["cheap", "budget", "value", "affordable", "under"],
-            "summer": ["summer", "light", "breathable", "cotton", "warm weather"],
-            "eco_friendly": ["organic", "eco", "sustainable", "green"],
-            "casual": ["casual", "everyday", "basic", "comfortable", "daily"],
-            "comfort": ["comfortable", "soft", "cozy", "warm", "stretch"],
-        }
+        """Initialize all pipeline components."""
         self.data_loader = DataLoader()
         self.normalizer = ProductNormalizer()
         self.feature_extractor = FeatureExtractor()
-
-    def normalize_product(self, product: Dict) -> Dict:
-        """Clean and normalize product data"""
-        return self.normalizer.normalize(product)
-
-    def extract_intents(self, product: Dict) -> List[str]:
-        """Extract user intents from product text"""
-        text = f"{product.get('title', '')} {product.get('description', '')}".lower()
-        intents = []
-
-        # Check for intent patterns
-        for intent, keywords in self.intent_map.items():
-            if any(kw in text for kw in keywords):
-                intents.append(intent)
-
-        # Price-based intent
-        if product.get("price", 0) < 30:
-            intents.append("budget_friendly")
-
-        # Category-based intents
-        category = product.get("category", "")
-        if "dress" in category:
-            intents.append("dress_shopping")
-        elif "hoodie" in category:
-            intents.append("cozy_wear")
-
-        return list(set(intents))
-
-    def extract_features(self, product: Dict) -> List[str]:
-        """Extract key features from product using FeatureExtractor"""
-        return FeatureExtractor().extract(product)
-
-    def create_ai_optimized_content(self, product: Dict) -> Dict:
-        """Generate AI-optimized title and description"""
-        brand = product.get("brand", "")
-        title = product.get("title", "")
-        desc = product.get("description", "")
-        intents = product.get("intents", [])
-        features = product.get("features", [])
-
-        # Create informative AI title
-        audience = (
-            "Women"
-            if "women" in product.get("category", "")
-            else "Men"
-            if "men" in product.get("category", "")
-            else "Kids"
-            if "kids" in product.get("category", "")
-            else ""
-        )
-
-        # Build optimized title
-        ai_title = f"{brand} {audience} {title}".strip()
-        if "organic" in features:
-            ai_title = f"Eco-Friendly {ai_title}"
-
-        # Build optimized description
-        ai_desc = desc
-        if intents:
-            ai_desc += f". Perfect for {', '.join(intents[:2]).replace('_', ' ')}"
-        if features:
-            key_features = ", ".join(features[:3]).replace("_", " ")
-            ai_desc += f". Features: {key_features}"
-
-        product["ai_optimized_title"] = ai_title[:150]  # Max 150 chars
-        product["ai_optimized_description"] = ai_desc[:500]  # Max 500 chars
-
-        return product
-
-    def build_knowledge_graph(self, products: List[Dict]) -> Dict:
-        """Create simple knowledge graph representation"""
-        graph = {"products": {}, "relationships": []}
-
-        for product in products:
-            pid = product["id"]
-
-            # Create product node
-            graph["products"][pid] = {
-                "title": product.get("ai_optimized_title", product["title"]),
-                "category": product.get("category", ""),
-                "intents": product.get("intents", []),
-                "features": product.get("features", []),
-                "price": product.get("price", 0),
-            }
-
-            # Create relationships based on shared intents
-            for intent in product.get("intents", []):
-                graph["relationships"].append(
-                    {"type": "serves_intent", "source": pid, "target": intent}
-                )
-
-            # Create relationships based on category
-            if product.get("category"):
-                graph["relationships"].append(
-                    {"type": "belongs_to", "source": pid, "target": product["category"]}
-                )
-
-        return graph
-
-    def match_query(self, query: str, products: List[Dict]) -> List[Dict]:
-        """Match user query to products using embeddings"""
-        # Encode query
-        query_embedding = self.encoder.encode(query)
-
-        results = []
-        for product in products:
-            # Create product text for embedding
-            product_text = f"{product.get('ai_optimized_title', '')} {product.get('ai_optimized_description', '')}"
-            product_embedding = self.encoder.encode(product_text)
-
-            # Calculate similarity
-            similarity = np.dot(query_embedding, product_embedding) / (
-                np.linalg.norm(query_embedding) * np.linalg.norm(product_embedding)
-            )
-
-            # Check for direct matches
-            query_lower = query.lower()
-            boost = 0
-
-            # Price matching
-            if "under" in query_lower or "below" in query_lower:
-                try:
-                    price_limit = float(re.findall(r"\d+", query)[0])
-                    if product["price"] <= price_limit:
-                        boost += 0.2
-                except (ValueError, IndexError):
-                    pass
-
-            # Intent matching
-            for intent in product.get("intents", []):
-                if intent.replace("_", " ") in query_lower:
-                    boost += 0.1
-
-            results.append(
-                {
-                    "product": product,
-                    "score": float(similarity) + boost,
-                    "match_reason": self._get_match_reason(query, product, similarity),
-                }
-            )
-
-        # Sort by score and return top matches
-        results.sort(key=lambda x: x["score"], reverse=True)
-        return results[:3]
-
-    def _get_match_reason(self, query: str, product: Dict, similarity: float) -> str:
-        """Explain why product matches query"""
-        reasons = []
-
-        if similarity > 0.5:
-            reasons.append("Strong semantic match")
-
-        query_lower = query.lower()
-
-        # Check price
-        if "under" in query_lower and product["price"] < 50:
-            reasons.append(f"Price in range (${product['price']})")
-
-        # Check features
-        for feature in product.get("features", []):
-            if feature.replace("_", " ") in query_lower:
-                reasons.append(f"Has {feature.replace('_', ' ')}")
-
-        return ". ".join(reasons) if reasons else "Partial match"
-
-    def process_pipeline(
-        self, input_csv: str, schema_json: str, queries_json: str
-    ) -> Dict:
-        """Run the complete pipeline"""
-
-        # 1. Load data
-        products = self.data_loader.load_data(input_csv, "csv")
-
-        schema = self.data_loader.load_data(schema_json, "json")
-
-        queries_data = self.data_loader.load_data(queries_json, "json")
-        queries = queries_data.get("queries", [])
-
-        # logger.info(f"Products: {products}")
-        # logger.info(f"Schema: {schema}")
-        # logger.info(f"Queries: {queries}")
-
-        # 2. Process each product
-        enriched_products = []
-        for product in products:
-            # Normalize
-            product = self.normalize_product(product)
-
-            # Extract semantic features
-            product["intents"] = self.extract_intents(product)
-            product["features"] = self.extract_features(product)
-
-            # Create AI-optimized content
-            product = self.create_ai_optimized_content(product)
-
-            enriched_products.append(product)
-            logger.info(f"Checking product schema compliance for ID: {product.get('id', 'N/A')}")
-            # Check schema compliance (basic check)
-            # Sample scheme.get("required_fields", {}): {'id': 'string', 'title': 'string (max 150 chars)', 'description': 'string (max 500 chars)', 'price': 'float (>0)', 'availability': 'enum[in_stock, out_of_stock)'}
-            for field, rule in schema.get("required_fields", {}).items():
-                if field not in product:
-                    logger.warning(f"Product {product.get('id', 'N/A')} missing required field: {field}")
-                else:
-                    # Basic type checks
-                    if "string" in rule and not isinstance(product[field], str):
-                        logger.warning(f"Field {field} in product {product.get('id', 'N/A')} should be string")
-                    if "float" in rule and not isinstance(product[field], (float, int)):
-                        logger.warning(f"Field {field} in product {product.get('id', 'N/A')} should be float")
-                    if "enum" in rule:
-                        enum_values = re.findall(r'enum\[(.*?)\]', rule)
-                        if enum_values:
-                            enum_list = enum_values[0].split(',')
-                            if product[field] not in enum_list:
-                                logger.warning(f"Field {field} in product {product.get('id', 'N/A')} has invalid value: {product[field]}")
-
-
-        # 3. Build knowledge graph (for 3 products as required)
-        graph = self.build_knowledge_graph(enriched_products[:3])
-
-        # 4. Test query matching
-        query_results = {}
-        for query in queries:
-            matches = self.match_query(query, enriched_products)
-            query_results[query] = [
-                {
-                    "product_id": m["product"]["id"],
-                    "title": m["product"]["ai_optimized_title"],
-                    "score": m["score"],
-                    "reason": m["match_reason"],
-                }
-                for m in matches
-            ]
-
-        return {
+        self.intent_mapper = IntentMapper()
+        self.content_optimizer = ContentOptimizer()
+        self.graph_builder = KnowledgeGraphBuilder()
+        self.query_matcher = QueryMatcher()
+        self.schema_validator = SchemaValidator()
+        
+        logger.info("AI Product Pipeline initialized")
+    
+    def process_pipeline(self, input_csv: str, schema_json: str, queries_json: str) -> Dict:
+        """
+        Run the complete pipeline from raw data to AI-ready outputs.
+        
+        Args:
+            input_csv: Path to raw product CSV file
+            schema_json: Path to AI schema JSON file  
+            queries_json: Path to test queries JSON file
+            
+        Returns:
+            dict containing all pipeline outputs
+        """
+        logger.info("Starting AI Product Pipeline")
+        
+        # Step 1: Load all input data
+        products = self._load_input_data(input_csv, schema_json, queries_json)
+        raw_products = products['raw_products']
+        schema = products['schema']
+        queries = products['queries']
+        
+        # Step 2: Process each product through the enrichment pipeline
+        enriched_products = self._enrich_products(raw_products)
+        
+        # Step 3: Validate enriched products against schema
+        self._validate_products(enriched_products, schema)
+        
+        # Step 4: Build knowledge graph (first 3 products as specified)
+        knowledge_graph = self._build_knowledge_graph(enriched_products[:3])
+        
+        # Step 5: Test query matching
+        query_results = self._test_queries(queries, enriched_products)
+        
+        # Step 6: Prepare final results
+        results = {
             "enriched_products": enriched_products,
-            "knowledge_graph": graph,
-            "query_results": query_results,
+            "knowledge_graph": knowledge_graph,
+            "query_results": query_results
         }
-
-
-def main():
-    """Main execution"""
-    # Setup paths
-    data_dir = Path("data")
-    input_dir = data_dir / "input"
-    output_dir = data_dir / "output"
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    # Create sample data if needed
-    if not input_dir.exists():
-        raise FileNotFoundError(f"Input directory not found: {input_dir}")
-
-    # Run pipeline
-    pipeline = AIProductPipeline()
-    results = pipeline.process_pipeline(
-        str(input_dir / "raw_products.csv"),
-        str(input_dir / "ai_schema.json"),
-        str(input_dir / "ai_queries.json"),
-    )
-
-    # Save outputs
-    with open(output_dir / "enriched_products.json", "w") as f:
-        json.dump(results["enriched_products"], f, indent=2)
-
-    with open(output_dir / "knowledge_graph.json", "w") as f:
-        json.dump(results["knowledge_graph"], f, indent=2)
-
-    with open(output_dir / "query_results.json", "w") as f:
-        json.dump(results["query_results"], f, indent=2)
-
-    logger.info("Pipeline completed successfully!")
-    logger.info(f"Results saved to {output_dir}")
-    logger.info(f"Processed {len(results['enriched_products'])} products")
-    logger.info(f"Matched {len(results['query_results'])} queries")
-
-
-if __name__ == "__main__":
-    main()
+        
+        logger.info("Pipeline completed successfully!")
+        return results
+    
+    def _load_input_data(self, input_csv: str, schema_json: str, queries_json: str) -> Dict:
+        """Load and validate all input data files."""
+        logger.info("Loading input data...")
+        
+        return {
+            "raw_products": self.data_loader.load_data(input_csv, "csv"),
+            "schema": self.data_loader.load_data(schema_json, "json"),
+            "queries": self.data_loader.load_data(queries_json, "json").get("queries", [])
+        }
+    
+    def _enrich_products(self, raw_products: List[Dict]) -> List[Dict]:
+        """Enrich each product with AI-ready semantic data."""
+        logger.info(f"Enriching {len(raw_products)} products...")
+        
+        enriched_products = []
+        
+        for product in raw_products:
+            # Step 1: Normalize messy data
+            product = self.normalizer.normalize(product)
+            
+            # Step 2: Extract semantic features
+            product["features"] = self.feature_extractor.extract(product)
+            
+            # Step 3: Map to user intents
+            product["intents"] = self.intent_mapper.extract_intents(product)
+            
+            # Step 4: Optimize content for AI platforms
+            product = self.content_optimizer.optimize_content(product)
+            
+            enriched_products.append(product)
+        
+        logger.info(f"Successfully enriched {len(enriched_products)} products")
+        return enriched_products
+    
+    def _validate_products(self, products: List[Dict], schema: Dict) -> None:
+        """Validate all products against the AI schema."""
+        logger.info("Validating products against schema...")
+        
+        validation_results = self.schema_validator.validate_batch(products, schema)
+        
+        if validation_results:
+            summary = self.schema_validator.get_validation_summary(validation_results)
+            logger.warning(f"Schema validation issues found:\n{summary}")
+        else:
+            logger.info("All products passed schema validation")
+    
+    def _build_knowledge_graph(self, products: List[Dict]) -> Dict:
+        """Build knowledge graph representation."""
+        logger.info(f"Building knowledge graph for {len(products)} products...")
+        
+        return self.graph_builder.build_graph(products)
+    
+    def _test_queries(self, queries: List[str], products: List[Dict]) -> Dict:
+        """Test query matching against enriched products."""
+        logger.info(f"Testing {len(queries)} queries against products...")
+        
+        query_results = {}
+        
+        for query in queries:
+            matches = self.query_matcher.match_query(query, products)
+            query_results[query] = matches
+        
+        return query_results
+    
+    def save_results(self, results: Dict, output_dir: str) -> None:
+        """Save all pipeline results to output directory."""
+        output_path = Path(output_dir)
+        output_path.mkdir(parents=True, exist_ok=True)
+        
+        # Save enriched products
+        self.data_loader.save_json(
+            results["enriched_products"],
+            output_path / "enriched_products.json"
+        )
+        
+        # Save knowledge graph
+        self.data_loader.save_json(
+            results["knowledge_graph"],
+            output_path / "knowledge_graph.json"
+        )
+        
+        # Save query results
+        self.data_loader.save_json(
+            results["query_results"],
+            output_path / "query_results.json"
+        )
+        
+        logger.info(f"Results saved to {output_path}")
