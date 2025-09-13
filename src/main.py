@@ -52,7 +52,7 @@ def main():
 
             logger.info(f"Sample Query: '{sample_query}'")
             for i, result in enumerate(sample_results, 1):
-                logger.info(f"  {i}. {result['title']} (Score: {result['score']:.3f})")
+                logger.info(f"  {i}. {result['description']} (Score: {result['score']:.3f})")
                 logger.info(f"     Reason: {result['reason']}")
 
     except Exception as e:
