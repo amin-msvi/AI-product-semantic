@@ -4,17 +4,17 @@ import logging
 
 class FeatureExtractor:
     """Extracts key features from normalized product data."""
-    
+
     def __init__(self):
         self.logger = logging.getLogger(self.__class__.__name__)
-    
+
     def extract(self, product: Dict[str, Any]) -> List[str]:
         """
         Extract key features from a normalized product record.
-        
+
         Args:
             product: Normalized product dictionary
-            
+
         Returns:
             List of extracted feature strings
         """
@@ -39,5 +39,7 @@ class FeatureExtractor:
             if color in text:
                 features.append(f"{color}_color")
 
-        self.logger.info(f"Extracted {len(features)} features for product ID: {product.get('id', 'N/A')}")
+        self.logger.info(
+            f"Extracted {len(features)} features for product ID: {product.get('id', 'N/A')}"
+        )
         return features
