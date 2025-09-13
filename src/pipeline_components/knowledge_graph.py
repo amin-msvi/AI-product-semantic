@@ -33,7 +33,7 @@ class KnowledgeGraphBuilder:
     def _create_product_node(self, product: Dict) -> Dict:
         """Create a product node for the knowledge graph."""
         return {
-            "title": product.get("ai_optimized_title", product.get("title", "")),
+            "description": product.get("ai_optimized_content", product.get("title", "")),
             "category": product.get("category", ""),
             "intents": product.get("intents", []),
             "features": product.get("features", []),

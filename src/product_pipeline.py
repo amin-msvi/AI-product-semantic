@@ -5,8 +5,7 @@ import logging
 from pipeline_components.data_loader import DataLoader
 from pipeline_components.normalizer import ProductNormalizer
 from pipeline_components.feature_extractor import FeatureExtractor
-from pipeline_components.intent_mapper import IntentMapper
-from pipeline_components.content_optimizer import ContentOptimizer
+from pipeline_components.semantic_enricher import SemanticEnricher
 from pipeline_components.knowledge_graph import KnowledgeGraphBuilder
 from pipeline_components.query_matcher import QueryMatcher
 from pipeline_components.schema_validator import SchemaValidator
@@ -23,8 +22,7 @@ class AIProductPipeline:
         self.data_loader = DataLoader()
         self.normalizer = ProductNormalizer()
         self.feature_extractor = FeatureExtractor()
-        self.intent_mapper = IntentMapper()
-        self.content_optimizer = ContentOptimizer()
+        self.semantic_enricher = SemanticEnricher()
         self.graph_builder = KnowledgeGraphBuilder()
         self.query_matcher = QueryMatcher()
         self.schema_validator = SchemaValidator()
@@ -102,11 +100,8 @@ class AIProductPipeline:
             # Step 2: Extract semantic features
             product["features"] = self.feature_extractor.extract(product)
 
-            # Step 3: Map to user intents
-            product["intents"] = self.intent_mapper.extract_intents(product)
-
-            # Step 4: Optimize content for AI platforms
-            product = self.content_optimizer.optimize_content(product)
+            # Step 3: Extract intents and optimize content
+            product = self.semantic_enricher.enrich_content(product)
 
             enriched_products.append(product)
 

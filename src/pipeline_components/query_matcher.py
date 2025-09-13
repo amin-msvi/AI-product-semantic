@@ -39,9 +39,7 @@ class QueryMatcher:
             results.append(
                 {
                     "product_id": product.get("id", ""),
-                    "title": product.get(
-                        "ai_optimized_title", product.get("title", "")
-                    ),
+                    "description": product.get("ai_optimized_content", product.get("title", "")),
                     "score": float(final_score),
                     "reason": match_reason,
                 }
@@ -135,8 +133,7 @@ class QueryMatcher:
     def _create_product_text(self, product):
         """Create searchable text representation of product."""
         components = [
-            product.get("ai_optimized_title", ""),
-            product.get("ai_optimized_description", ""),
+            product.get("ai_optimized_content", ""),
             " ".join(product.get("intents", [])),
             " ".join(product.get("features", [])),
         ]
