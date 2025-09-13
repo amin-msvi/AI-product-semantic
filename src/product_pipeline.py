@@ -4,8 +4,12 @@ from typing import Dict, List
 from pathlib import Path
 import numpy as np
 from sentence_transformers import SentenceTransformer
-from data_utils import load_data
+from data_utils import DataLoader
+from normalizer import ProductNormalizer
+import logging
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class AIProductPipeline:
     """Simple but practical pipeline for AI-ready product data"""
@@ -22,42 +26,12 @@ class AIProductPipeline:
             "casual": ["casual", "everyday", "basic", "comfortable", "daily"],
             "comfort": ["comfortable", "soft", "cozy", "warm", "stretch"],
         }
+        self.data_loader = DataLoader()
+        self.normalizer = ProductNormalizer()
 
     def normalize_product(self, product: Dict) -> Dict:
         """Clean and normalize product data"""
-        # Fix brand variations (H&M, H & M, etc.)
-        brand = product.get("brand", "")
-        if "h" in brand.lower() and "m" in brand.lower():
-            product["brand"] = "H&M"
-
-        # Normalize availability
-        avail = product.get("availability", "").lower().replace(" ", "")
-        product["availability"] = "in_stock" if "in" in avail else "out_of_stock"
-
-        # Clean category (clothes>women>dresses → women/dresses)
-        category = product.get("category", "")
-        product["category"] = category.replace(">", "/").replace(",", "/").lower()
-
-        # Ensure price is float
-        if type(product["price"]) is float:
-            product["price"] = float(product["price"])
-        else:
-            product["price"] = (
-                float(re.sub(r"[^\d.]", "", str(product.get("price", "0")))) or 0.0
-            )
-
-        # Take first image if multiple
-        images = product.get("image_urls", "")
-
-        if isinstance(images, str) and "|" in images:
-            product["image_link"] = images.split("|")[0].strip()
-        else:
-            product["image_link"] = images.strip() if isinstance(images, str) else ""
-
-        # Add ID field
-        product["id"] = product.get("product_id", "")
-
-        return product
+        return self.normalizer.normalize(product)
 
     def extract_intents(self, product: Dict) -> List[str]:
         """Extract user intents from product text"""
@@ -246,16 +220,16 @@ class AIProductPipeline:
         """Run the complete pipeline"""
 
         # 1. Load data
-        products = load_data(input_csv, "csv")
+        products = self.data_loader.load_data(input_csv, "csv")
 
-        schema = load_data(schema_json, "json")
+        schema = self.data_loader.load_data(schema_json, "json")
 
-        queries_data = load_data(queries_json, "json")
+        queries_data = self.data_loader.load_data(queries_json, "json")
         queries = queries_data.get("queries", [])
 
-        print("products:", products)
-        print("schema:", schema)
-        print("queries:", queries)
+        # logger.info(f"Products: {products}")
+        # logger.info(f"Schema: {schema}")
+        # logger.info(f"Queries: {queries}")
 
         # 2. Process each product
         enriched_products = []
@@ -306,8 +280,7 @@ def main():
 
     # Create sample data if needed
     if not input_dir.exists():
-        input_dir.mkdir(parents=True, exist_ok=True)
-        create_sample_data(input_dir)
+        raise FileNotFoundError(f"Input directory not found: {input_dir}")
 
     # Run pipeline
     pipeline = AIProductPipeline()
@@ -327,60 +300,10 @@ def main():
     with open(output_dir / "query_results.json", "w") as f:
         json.dump(results["query_results"], f, indent=2)
 
-    print("✅ Pipeline completed successfully!")
-    print(f"📁 Results saved to {output_dir}")
-    print(f"📊 Processed {len(results['enriched_products'])} products")
-    print(f"🔍 Matched {len(results['query_results'])} queries")
-
-
-def create_sample_data(input_dir: Path):
-    """Create the provided sample data"""
-
-    # raw_products.csv
-    csv_data = load_data("data/input/raw_products.csv", "csv")
-    print(csv_data)
-
-    with open(input_dir / "raw_products.csv", "w") as f:
-        f.write(csv_data)
-
-    # ai_schema.json
-    schema = {
-        "required_fields": {
-            "id": "string",
-            "title": "string (max 150 chars)",
-            "description": "string (max 500 chars)",
-            "price": "float (>0)",
-            "availability": "enum[in_stock, out_of_stock)",
-        },
-        "optional_fields": {
-            "brand": "string",
-            "category": "normalized string",
-            "gtin": "string",
-            "image_link": "url",
-        },
-        "semantic_fields": {
-            "intents": "array of strings",
-            "features": "array of strings",
-            "relationships": "array of {type, target}",
-        },
-    }
-
-    with open(input_dir / "ai_schema.json", "w") as f:
-        json.dump(schema, f, indent=2)
-
-    # ai_queries.json
-    queries = {
-        "queries": [
-            "affordable summer dresses under $30",
-            "eco-friendly hoodies for everyday wear",
-            "basic t-shirts for men slim fit",
-            "comfortable jeans for kids",
-            "white sneakers for casual outfits",
-        ]
-    }
-
-    with open(input_dir / "ai_queries.json", "w") as f:
-        json.dump(queries, f, indent=2)
+    logger.info("Pipeline completed successfully!")
+    logger.info(f"Results saved to {output_dir}")
+    logger.info(f"Processed {len(results['enriched_products'])} products")
+    logger.info(f"Matched {len(results['query_results'])} queries")
 
 
 if __name__ == "__main__":
