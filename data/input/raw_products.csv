@@ -1,0 +1,7 @@
+product_id,title,description,brand,category,price,availability,gtin,image_urls
+HM001,"Ladies Dress","summer cotton dress","H & M","clothes>women>dresses",29.99,instock,123456789012,"https://example.com/hm_dress1.jpg"
+HM002,"Tshirt Men","basic tee cotton slim fit","H&M","Mens Tops",12.99,in stock,,"https://example.com/hm_tshirt1.jpg|https://example.com/hm_tshirt2.jpg"
+HM003,"Organic Hoodie","hoodie warm soft eco cotton","H and M","Unisex Hoodies",39.99,available,,"https://example.com/hm_hoodie.jpg"
+HM004,"Kids Jeans Blue","stretch denim pants kids","HM","kids > bottoms > jeans",19.99,outofstock,456123789654,"https://example.com/hm_kids_jeans.jpg"
+HM005,"Sneaker Shoes","white shoes unisex everyday","H&M","footwear,sneakers",49.99,in stock,,""
+

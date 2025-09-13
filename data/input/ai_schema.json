@@ -1,0 +1,20 @@
+{
+  "required_fields": {
+    "id": "string",
+    "title": "string (max 150 chars)",
+    "description": "string (max 500 chars)",
+    "price": "float (>0)",
+    "availability": "enum[in_stock, out_of_stock)"
+  },
+  "optional_fields": {
+    "brand": "string",
+    "category": "normalized string",
+    "gtin": "string",
+    "image_link": "url"
+  },
+  "semantic_fields": {
+    "intents": "array of strings (e.g., 'summer outfit', 'eco-friendly fashion')",
+    "features": "array of strings (e.g., 'organic cotton', 'slim fit')",
+    "relationships": "array of {type, target} for graph connections"
+  }
+}
