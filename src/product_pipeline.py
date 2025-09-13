@@ -7,6 +7,7 @@ from sentence_transformers import SentenceTransformer
 from data_utils import DataLoader
 from normalizer import ProductNormalizer
 import logging
+from feature_extractor import FeatureExtractor
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -28,6 +29,7 @@ class AIProductPipeline:
         }
         self.data_loader = DataLoader()
         self.normalizer = ProductNormalizer()
+        self.feature_extractor = FeatureExtractor()
 
     def normalize_product(self, product: Dict) -> Dict:
         """Clean and normalize product data"""
@@ -57,29 +59,8 @@ class AIProductPipeline:
         return list(set(intents))
 
     def extract_features(self, product: Dict) -> List[str]:
-        """Extract key features from product"""
-        text = f"{product.get('title', '')} {product.get('description', '')}".lower()
-        features = []
-
-        # Material features
-        materials = ["cotton", "organic", "denim", "wool"]
-        for material in materials:
-            if material in text:
-                features.append(material)
-
-        # Style features
-        if "slim" in text:
-            features.append("slim_fit")
-        if "stretch" in text:
-            features.append("stretchy")
-
-        # Color features
-        colors = ["white", "blue", "black"]
-        for color in colors:
-            if color in text:
-                features.append(f"{color}_color")
-
-        return features
+        """Extract key features from product using FeatureExtractor"""
+        return FeatureExtractor().extract(product)
 
     def create_ai_optimized_content(self, product: Dict) -> Dict:
         """Generate AI-optimized title and description"""
@@ -245,6 +226,25 @@ class AIProductPipeline:
             product = self.create_ai_optimized_content(product)
 
             enriched_products.append(product)
+            logger.info(f"Checking product schema compliance for ID: {product.get('id', 'N/A')}")
+            # Check schema compliance (basic check)
+            # Sample scheme.get("required_fields", {}): {'id': 'string', 'title': 'string (max 150 chars)', 'description': 'string (max 500 chars)', 'price': 'float (>0)', 'availability': 'enum[in_stock, out_of_stock)'}
+            for field, rule in schema.get("required_fields", {}).items():
+                if field not in product:
+                    logger.warning(f"Product {product.get('id', 'N/A')} missing required field: {field}")
+                else:
+                    # Basic type checks
+                    if "string" in rule and not isinstance(product[field], str):
+                        logger.warning(f"Field {field} in product {product.get('id', 'N/A')} should be string")
+                    if "float" in rule and not isinstance(product[field], (float, int)):
+                        logger.warning(f"Field {field} in product {product.get('id', 'N/A')} should be float")
+                    if "enum" in rule:
+                        enum_values = re.findall(r'enum\[(.*?)\]', rule)
+                        if enum_values:
+                            enum_list = enum_values[0].split(',')
+                            if product[field] not in enum_list:
+                                logger.warning(f"Field {field} in product {product.get('id', 'N/A')} has invalid value: {product[field]}")
+
 
         # 3. Build knowledge graph (for 3 products as required)
         graph = self.build_knowledge_graph(enriched_products[:3])

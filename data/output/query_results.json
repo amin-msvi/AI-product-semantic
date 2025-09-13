@@ -3,13 +3,13 @@
     {
       "product_id": "HM001",
       "title": "H&M Women Ladies Dress",
-      "score": 0.8585885047912598,
+      "score": 0.8776836276054383,
       "reason": "Strong semantic match. Price in range ($29.99)"
     },
     {
       "product_id": "HM002",
       "title": "H&M Men Tshirt Men",
-      "score": 0.6308985233306885,
+      "score": 0.6541663587093354,
       "reason": "Price in range ($12.99)"
     },
     {
@@ -23,19 +23,19 @@
     {
       "product_id": "HM003",
       "title": "Eco-Friendly H&M  Organic Hoodie",
-      "score": 0.688513457775116,
+      "score": 0.7041553258895874,
       "reason": "Strong semantic match"
     },
     {
       "product_id": "HM002",
       "title": "H&M Men Tshirt Men",
-      "score": 0.369189977645874,
+      "score": 0.37988942861557007,
       "reason": "Partial match"
     },
     {
       "product_id": "HM001",
       "title": "H&M Women Ladies Dress",
-      "score": 0.3559608459472656,
+      "score": 0.35814690589904785,
       "reason": "Partial match"
     }
   ],
@@ -43,19 +43,19 @@
     {
       "product_id": "HM002",
       "title": "H&M Men Tshirt Men",
-      "score": 0.7676374316215515,
+      "score": 0.764491617679596,
       "reason": "Strong semantic match. Has slim fit"
-    },
-    {
-      "product_id": "HM001",
-      "title": "H&M Women Ladies Dress",
-      "score": 0.3363073170185089,
-      "reason": "Partial match"
     },
     {
       "product_id": "HM003",
       "title": "Eco-Friendly H&M  Organic Hoodie",
-      "score": 0.33068475127220154,
+      "score": 0.3441125750541687,
+      "reason": "Partial match"
+    },
+    {
+      "product_id": "HM001",
+      "title": "H&M Women Ladies Dress",
+      "score": 0.3423410654067993,
       "reason": "Partial match"
     }
   ],
@@ -69,13 +69,13 @@
     {
       "product_id": "HM003",
       "title": "Eco-Friendly H&M  Organic Hoodie",
-      "score": 0.41430837512016294,
+      "score": 0.4327210247516632,
       "reason": "Partial match"
     },
     {
       "product_id": "HM002",
       "title": "H&M Men Tshirt Men",
-      "score": 0.33829236030578613,
+      "score": 0.347994863986969,
       "reason": "Partial match"
     }
   ],
@@ -89,7 +89,7 @@
     {
       "product_id": "HM002",
       "title": "H&M Men Tshirt Men",
-      "score": 0.4387113809585571,
+      "score": 0.4295164406299591,
       "reason": "Partial match"
     },
     {
