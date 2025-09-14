@@ -66,18 +66,15 @@ And creates AI-optimized data like this:
 - Maps products to user needs ("summer outfit", "budget-friendly")
 - Uses keywords, categories, and price ranges
 - Creates searchable tags for AI systems
-
-### 4. AI Optimization
-- Rewrites product titles and descriptions for clarity
-- Adds context about target audience and use cases
 - Optimizes for LLM queries
+- Adds target audience
 
-### 5. Knowledge Graph
+### 4. Knowledge Graph
 - Connects products to intents and categories
 - Shows relationships between similar items (Adjancency matrix)
 - Helps AI systems discover related products
 
-### 6. Query Testing
+### 5. Query Testing
 - Tests real user questions like "affordable summer dresses under $30"
 - Ranks products by relevance using semantic similarity
 - Shows why each product matches the query
