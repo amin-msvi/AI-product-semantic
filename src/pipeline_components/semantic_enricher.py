@@ -19,6 +19,14 @@ class SemanticEnricher:
             "comfort": ["comfortable", "soft", "cozy", "warm", "stretch"],
         }
 
+        self.category_keywords = {
+            "dress": ["dress_shopping", "fashion", "style"],
+            "hoodie": ["cozy_wear", "casual_wear"],
+            "sneaker": ["footwear", "active_wear"],
+            "jacket": ["outerwear", "cold_weather"],
+            "t-shirt": ["casual_wear", "everyday_wear"],
+        }
+
         # Price-based thresholds
         self.budget_threshold = 30.0
 
@@ -68,7 +76,7 @@ class SemanticEnricher:
         """Extract price-based intents."""
         intents = set()
 
-        if price > 0 and price < self.budget_threshold:
+        if 0 < price < self.budget_threshold:
             intents.add("budget_friendly")
 
         return intents
@@ -78,10 +86,9 @@ class SemanticEnricher:
         intents = set()
         category_lower = category.lower()
 
-        if "dress" in category_lower:
-            intents.add("dress_shopping")
-        elif "hoodie" in category_lower:
-            intents.add("cozy_wear")
+        for keyword, mapped_intents in self.category_keywords.items():
+            if keyword in category_lower:
+                intents.update(mapped_intents)
 
         return intents
 

@@ -16,6 +16,8 @@
     "intents": [
       "budget_friendly",
       "dress_shopping",
+      "fashion",
+      "style",
       "summer"
     ],
     "ai_optimized_content": "H&M Women Ladies Dress. summer cotton dress. Perfect for budget friendly, dress shopping. Features: cotton"
@@ -58,12 +60,13 @@
       "organic"
     ],
     "intents": [
+      "casual_wear",
       "comfort",
       "cozy_wear",
       "eco_friendly",
       "summer"
     ],
-    "ai_optimized_content": "Eco-Friendly H&M Organic Hoodie. hoodie warm soft eco cotton. Perfect for comfort, cozy wear. Features: cotton, organic"
+    "ai_optimized_content": "Eco-Friendly H&M Organic Hoodie. hoodie warm soft eco cotton. Perfect for casual wear, comfort. Features: cotton, organic"
   },
   {
     "product_id": "HM004",
@@ -102,9 +105,11 @@
       "white_color"
     ],
     "intents": [
-      "casual"
+      "active_wear",
+      "casual",
+      "footwear"
     ],
-    "ai_optimized_content": "H&M Sneaker Shoes. white shoes unisex everyday. Perfect for casual. Features: white color"
+    "ai_optimized_content": "H&M Sneaker Shoes. white shoes unisex everyday. Perfect for active wear, casual. Features: white color"
   },
   {
     "product_id": "HM006",

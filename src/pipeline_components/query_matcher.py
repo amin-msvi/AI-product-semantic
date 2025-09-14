@@ -88,7 +88,8 @@ class QueryMatcher:
 
     def _get_price_boost(self, query_lower, product):
         """Calculate price-based boost score."""
-        if "under" not in query_lower and "below" not in query_lower:
+        # if "under" not in query_lower and "below" not in query_lower:
+        if not any(keyword in query_lower for keyword in ["under", "below"]):
             return 0.0
 
         try:
