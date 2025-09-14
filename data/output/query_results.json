@@ -3,8 +3,8 @@
     {
       "product_id": "HM001",
       "description": "H&M Women Ladies Dress. summer cotton dress. Perfect for budget friendly, dress shopping. Features: cotton",
-      "score": 0.8080576539039612,
-      "reason": "Strong semantic match. Price in range ($29.99)"
+      "score": 0.7897674024105072,
+      "reason": "Price in range ($29.99)"
     },
     {
       "product_id": "HM002",
@@ -22,8 +22,8 @@
   "eco-friendly hoodies for everyday wear": [
     {
       "product_id": "HM003",
-      "description": "Eco-Friendly H&M Organic Hoodie. hoodie warm soft eco cotton. Perfect for comfort, cozy wear. Features: cotton, organic",
-      "score": 0.682920515537262,
+      "description": "Eco-Friendly H&M Organic Hoodie. hoodie warm soft eco cotton. Perfect for casual wear, comfort. Features: cotton, organic",
+      "score": 0.6843547821044922,
       "reason": "Strong semantic match"
     },
     {
@@ -35,7 +35,7 @@
     {
       "product_id": "HM001",
       "description": "H&M Women Ladies Dress. summer cotton dress. Perfect for budget friendly, dress shopping. Features: cotton",
-      "score": 0.3306998014450073,
+      "score": 0.3237505853176117,
       "reason": "Partial match"
     }
   ],
@@ -47,15 +47,15 @@
       "reason": "Strong semantic match. Has slim fit"
     },
     {
-      "product_id": "HM005",
-      "description": "H&M Sneaker Shoes. white shoes unisex everyday. Perfect for casual. Features: white color",
-      "score": 0.3489392101764679,
+      "product_id": "HM003",
+      "description": "Eco-Friendly H&M Organic Hoodie. hoodie warm soft eco cotton. Perfect for casual wear, comfort. Features: cotton, organic",
+      "score": 0.34776225686073303,
       "reason": "Partial match"
     },
     {
-      "product_id": "HM001",
-      "description": "H&M Women Ladies Dress. summer cotton dress. Perfect for budget friendly, dress shopping. Features: cotton",
-      "score": 0.3380645215511322,
+      "product_id": "HM005",
+      "description": "H&M Sneaker Shoes. white shoes unisex everyday. Perfect for active wear, casual. Features: white color",
+      "score": 0.3369795083999634,
       "reason": "Partial match"
     }
   ],
@@ -68,8 +68,8 @@
     },
     {
       "product_id": "HM003",
-      "description": "Eco-Friendly H&M Organic Hoodie. hoodie warm soft eco cotton. Perfect for comfort, cozy wear. Features: cotton, organic",
-      "score": 0.4070111870765686,
+      "description": "Eco-Friendly H&M Organic Hoodie. hoodie warm soft eco cotton. Perfect for casual wear, comfort. Features: cotton, organic",
+      "score": 0.41331318616867063,
       "reason": "Partial match"
     },
     {
@@ -82,8 +82,8 @@
   "white sneakers for casual outfits": [
     {
       "product_id": "HM005",
-      "description": "H&M Sneaker Shoes. white shoes unisex everyday. Perfect for casual. Features: white color",
-      "score": 0.8352731227874756,
+      "description": "H&M Sneaker Shoes. white shoes unisex everyday. Perfect for active wear, casual. Features: white color",
+      "score": 0.8101014852523803,
       "reason": "Strong semantic match"
     },
     {

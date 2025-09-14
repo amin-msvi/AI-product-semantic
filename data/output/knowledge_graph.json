@@ -6,6 +6,8 @@
       "intents": [
         "budget_friendly",
         "dress_shopping",
+        "fashion",
+        "style",
         "summer"
       ],
       "features": [
@@ -28,9 +30,10 @@
       "price": 12.99
     },
     "HM003": {
-      "description": "Eco-Friendly H&M Organic Hoodie. hoodie warm soft eco cotton. Perfect for comfort, cozy wear. Features: cotton, organic",
+      "description": "Eco-Friendly H&M Organic Hoodie. hoodie warm soft eco cotton. Perfect for casual wear, comfort. Features: cotton, organic",
       "category": "unisex/hoodies",
       "intents": [
+        "casual_wear",
         "comfort",
         "cozy_wear",
         "eco_friendly",
@@ -53,6 +56,16 @@
       "type": "serves_intent",
       "source": "HM001",
       "target": "dress_shopping"
+    },
+    {
+      "type": "serves_intent",
+      "source": "HM001",
+      "target": "fashion"
+    },
+    {
+      "type": "serves_intent",
+      "source": "HM001",
+      "target": "style"
     },
     {
       "type": "serves_intent",
@@ -83,6 +96,11 @@
       "type": "belongs_to",
       "source": "HM002",
       "target": "mens/tops"
+    },
+    {
+      "type": "serves_intent",
+      "source": "HM003",
+      "target": "casual_wear"
     },
     {
       "type": "serves_intent",
