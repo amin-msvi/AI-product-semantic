@@ -35,9 +35,11 @@ And creates AI-optimized data like this:
 
 ## Quick Start
 
-1. **Install dependencies**:
+1. **Preparing the environment**:
+The `build-env` target in the makerfile installs `uv` if not already installed, sets up a Python virtual environment (with Python 3.11.13), and installs the required dependencies.
+
    ```bash
-   pip install -r requirements.txt
+   make build-env
    ```
 
 2. **Run the pipeline**:
