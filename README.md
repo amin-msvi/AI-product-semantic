@@ -4,22 +4,33 @@ This project transforms messy e-commerce product data into AI-ready formats that
 
 ## What It Does
 
-Takes raw product data like this:
+Takes user query like this:
 ```
-"Ladies Dress","summer cotton dress","H & M","clothes>women>dresses",29.99,instock
+"affordable summer dresses under $30"
 ```
 
 And creates AI-optimized data like this:
 ```json
-{
-  "title": "H&M Women Ladies Dress",
-  "ai_optimized_content": "H&M Women Ladies Dress. summer cotton dress. Perfect for budget friendly, dress shopping. Features: cotton",
-  "intents": ["budget_friendly", "dress_shopping", "fashion", "style", "summer"],
-  "features": ["cotton"],
-  "relationships": [
-    {"type": "serves_intent", "source": "HM001", "target": "summer"}
-  ]
-}
+[
+    {
+      "product_id": "HM001",
+      "description": "H&M Women Ladies Dress. summer cotton dress. Perfect for budget friendly, dress shopping. Features: cotton",
+      "score": 0.7897674024105072,
+      "reason": "Price in range ($29.99)"
+    },
+    {
+      "product_id": "HM002",
+      "description": "H&M Men Tshirt Men. basic tee cotton slim fit. Perfect for budget friendly, casual. Features: cotton, slim fit",
+      "score": 0.6232020139694214,
+      "reason": "Price in range ($12.99)"
+    },
+    {
+      "product_id": "HM004",
+      "description": "H&M Kids Kids Jeans Blue. stretch denim pants kids. Perfect for budget friendly, comfort. Features: denim, stretchy, blue color",
+      "score": 0.5088505268096923,
+      "reason": "Price in range ($19.99)"
+    }
+  ],
 ```
 
 ## Quick Start
