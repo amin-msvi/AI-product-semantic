@@ -62,7 +62,7 @@ And creates AI-optimized data like this:
 - Detects styles (slim fit, stretchy)
 - Identifies colors (white, blue, black)
 
-### 3. Intent Detection
+### 3. Semantic Enrichment
 - Maps products to user needs ("summer outfit", "budget-friendly")
 - Uses keywords, categories, and price ranges
 - Creates searchable tags for AI systems
@@ -84,9 +84,10 @@ And creates AI-optimized data like this:
 **Query**: "affordable summer dresses under $30"
 
 **Results**:
-1. H&M Women Ladies Dress ($29.99) - Price in range, summer intent
-2. Basic T-shirt ($12.99) - Price in range, partial match
-3. Kids Jeans ($19.99) - Price in range, partial match
+1. H&M Women Ladies Dress. summer cotton dress. Perfect for budget friendly, dress shopping. Features: cotton (Score: 0.790)
+Reason: Price in range ($29.99)
+2. H&M Men Tshirt Men. basic tee cotton slim fit. Perfect for budget friendly, casual. Features: cotton, slim fit (Score: 0.623)
+Reason: Price in range ($12.99)
 
 ## Project Structure
 
